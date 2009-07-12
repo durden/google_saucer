@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Current Beers</h1>
+    {% for beer in beers %}
+        {% if forloop.first %}
+            <ul>
+        {% endif %}
+
+        <li>{{ beer.name }}</li>
+
+        {% if forloop.last %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
