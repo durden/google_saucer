@@ -8,6 +8,17 @@ class Saucer():
 
     __btl_str__ = r"\(BTL\)"
 
+    def __sanitize__(self, arg):
+        ret = "N/A"
+
+        if (isinstance(arg, unicode)):
+            # Suppress multiple whitespace characters and leading/trailing
+            # whitespace
+            ret = re.sub('\s+', ' ', arg).strip()
+            #ret = ' '.join(arg.split())
+
+        return ret
+
     def __fetch_json__(self, url):
         base_url = "http://query.yahooapis.com/v1/public/yql"
         return simplejson.load(urllib.urlopen( "%s?%s" % (base_url, url)))
@@ -20,15 +31,16 @@ class Saucer():
 
         # Hide the ugly yql/html parsing and create list of dictionaries 
         beers = []
+        regex = re.compile(Saucer.__btl_str__)
         for tmp in res['query']['results']['option']:
             beer = {}
 
-            beer['name'] = tmp['content'].strip()
+            beer['name'] = self.__sanitize__(tmp['content'])
             beer['id'] = tmp['value'].strip()
             beer['type'] = Saucer.DRAFT 
 
             # Bottle or draft?
-            if re.compile(Saucer.__btl_str__).search(beer['name']):
+            if regex.search(beer['name']):
                 beer['type'] = Saucer.BOTTLE
 
                 # Remove the bottle string in name
@@ -46,6 +58,11 @@ class Saucer():
         res = self.__fetch_json__(url)
 
         # Create a dictionary b/c it's easier to work with
-        # FIXME: Sanitize the keys in dictionary
-        return dict(zip(res['query']['results']['p'][::2],
+        tmp = dict(zip(res['query']['results']['p'][::2],
                     res['query']['results']['p'][1::2]))
+
+        # Cleanup all the whitespace, etc.
+        for k,v in tmp.items():
+            tmp[k] = self.__sanitize__(v)
+
+        return tmp
