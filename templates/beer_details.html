@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1> {{ beer.name }} </h1>
+    <ul>
+        <li> {{ beer.type }} </li>
+        <li> {{ beer.style }} </li>
+        <li> Updated on: {{ beer.date|date:"M d Y" }} </li>
+    </ul>
+    <p> {{ beer.descr }} </p>
+{% endblock %}

@@ -12,9 +12,9 @@ from api.saucer import Saucer
 
 class Index(webapp.RequestHandler):
     def get(self):
-        saucer = Saucer()
-        beers = saucer.getAllBeers()
-        template_values = {'beers' : beers}
+        drafts = Beer.all().filter("type = ", "Draft")
+        bottles = Beer.all().filter("type = ", "Bottle")
+        template_values = {'drafts' : drafts, 'bottles' : bottles}
 
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
         self.response.out.write(template.render(path, template_values)) 
@@ -35,12 +35,21 @@ class Update(webapp.RequestHandler):
         self.response.out.write(template.render(path, template_values)) 
 
 
+class BrewDetail(webapp.RequestHandler):
+    def get(self, request):
+        beer = db.get(request)
+        template_values = {'beer' : beer}
+        path = os.path.join(os.path.dirname(__file__),
+                                'templates/beer_details.html')
+        self.response.out.write(template.render(path, template_values)) 
+        
 def main():
     #logging.getLogger().setLevel(logging.DEBUG)
 
     # URL Mapping
     app = webapp.WSGIApplication([('/', Index),
                                   (r'/update/', Update),
+                                  (r'/beer/(.*)', BrewDetail),
                                   #(r'/edit/*(.*)', EditHandler),
                                   #(r'/delete/(.*)', DeleteHandler),
                                  ], debug=True)

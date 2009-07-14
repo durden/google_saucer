@@ -2,12 +2,26 @@
 
 {% block content %}
     <h1>Current Beers</h1>
-    {% for beer in beers %}
+    <h2>Draft</h2>
+    {% for beer in drafts %}
         {% if forloop.first %}
             <ul>
         {% endif %}
 
-        <li>{{ beer.name }}</li>
+        <li><a href="beer/{{ beer.key }}">{{ beer.name }}</a></li>
+
+        {% if forloop.last %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+
+    <h2>Bottle</h2>
+    {% for beer in bottles %}
+        {% if forloop.first %}
+            <ul>
+        {% endif %}
+
+        <li><a href="beer/{{ beer.name|urlencode }}">{{ beer.name }}</a></li>
 
         {% if forloop.last %}
             </ul>
