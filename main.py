@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import re
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -43,6 +44,35 @@ class BrewDetail(webapp.RequestHandler):
                                 'templates/beer_details.html')
         self.response.out.write(template.render(path, template_values)) 
         
+class Search(webapp.RequestHandler):
+    def get(self, style=None):
+        if style is not None and len(style) > 0:
+            # FIXME: Un-urlize the string
+            style = re.sub(r'%20', ' ', style)
+            beers = Beer.all().filter("style = ", style)
+            template_values = {'beers' : beers, 'search' : style}
+            path = os.path.join(os.path.dirname(__file__),
+                                    'templates/beers.html')
+            self.response.out.write(template.render(path, template_values)) 
+
+        else:
+            # Find all the styles by creating a set from all beers b/c
+            # app engine won't let us grab just this column from a table
+            tmp = Beer.all()
+
+            # Use a list to preserve ordering
+            styles = []
+
+            for beer in tmp:
+                styles.append(beer.style)
+
+            styles = list(set(styles))
+
+            template_values = {'styles' : styles}
+            path = os.path.join(os.path.dirname(__file__),
+                                    'templates/search.html')
+            self.response.out.write(template.render(path, template_values)) 
+
 def main():
     #logging.getLogger().setLevel(logging.DEBUG)
 
@@ -50,6 +80,7 @@ def main():
     app = webapp.WSGIApplication([('/', Index),
                                   (r'/update/', Update),
                                   (r'/beer/(.*)', BrewDetail),
+                                  (r'/search/*(.*)', Search),
                                   #(r'/edit/*(.*)', EditHandler),
                                   #(r'/delete/(.*)', DeleteHandler),
                                  ], debug=True)

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>Search by beer name</p>
+    <form action="/search/" method="post">
+        <label>Name:</label>
+        <input type="text"></input>
+        <input type="submit" value="Search">
+    </form>
+
+    <p>Search by style</p>
+    {% for style in styles %}
+        {% if forloop.first %}
+            <ul>
+        {% endif %}
+
+        <li><a href="search/{{ style|urlencode }}">{{ style }}</a></li>
+
+        {% if forloop.last %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
