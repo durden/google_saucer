@@ -1,0 +1,7 @@
+- Create pretty URLS for viewing details
+- Mobile formatting
+- Search by beer name, bottle/draft, style
+- Cron job to update db once a day
+- Workaround for selecting single column and removing dups
+- Tag cloud for styles
+- Sort styles
