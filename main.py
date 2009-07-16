@@ -54,24 +54,37 @@ class Search(webapp.RequestHandler):
             path = os.path.join(os.path.dirname(__file__),
                                     'templates/beers.html')
             self.response.out.write(template.render(path, template_values)) 
+            return
 
-        else:
-            # Find all the styles by creating a set from all beers b/c
-            # app engine won't let us grab just this column from a table
-            tmp = Beer.all()
+        # Find all the styles by creating a set from all beers b/c
+        # app engine won't let us grab just this column from a table
+        tmp = Beer.all()
 
-            # Use a list to preserve ordering
-            styles = []
+        # Use a list to preserve ordering
+        styles = []
 
-            for beer in tmp:
-                styles.append(beer.style)
+        for beer in tmp:
+            styles.append(beer.style)
 
-            styles = list(set(styles))
+        styles = list(set(styles))
+        styles.sort()
+        template_values = {'styles' : styles}
+        path = os.path.join(os.path.dirname(__file__),
+                                'templates/search.html')
+        self.response.out.write(template.render(path, template_values)) 
 
-            template_values = {'styles' : styles}
-            path = os.path.join(os.path.dirname(__file__),
-                                    'templates/search.html')
-            self.response.out.write(template.render(path, template_values)) 
+    def post(self, name):
+        name = self.request.get('name')
+
+        if name is None or not len(name):
+            self.redirect("/search")
+            return
+        beers = Beer.all().filter("name = ", name)
+        template_values = {'beers' : beers}
+        path = os.path.join(os.path.dirname(__file__),
+                                'templates/beers.html')
+        self.response.out.write(template.render(path, template_values))
+
 
 def main():
     #logging.getLogger().setLevel(logging.DEBUG)
