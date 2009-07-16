@@ -12,5 +12,10 @@
         {% if forloop.last %}
             </ul>
         {% endif %}
+
+    {% ifequal beers|length 0 %}
+        <p>Sorry, couldn't find that beer. Search again.</p>
+    {% endifequal %}
+
     {% endfor %}
 {% endblock %}
