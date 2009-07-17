@@ -1,5 +1,5 @@
-application: saucer
-version: 1
+application: mobilesaucer
+version: 4
 runtime: python
 api_version: 1
 
@@ -9,6 +9,9 @@ handlers:
 
 - url: /img
   static_dir: img
+
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
 
 - url: /.*
   script: main.py
