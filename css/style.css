@@ -19,7 +19,7 @@ h2 {
 }
 
 #topnav {
-	background-color: #000000;
+	background-color: #3b3b3b;
 	margin: 0px;
 	border: 1px solid #000000;
 	color: #ffffff;
@@ -48,6 +48,22 @@ h2 {
     width: 99%;
     margin: 0px;
     padding: 0px;
+}
+
+#content ul li a {
+    display: block;
+    background: url('/img/iPhoneArrow.png') no-repeat right center;
+    padding-right: 30px;
+}
+
+#content ul li a {
+    color: #3366ff;
+    font-weight: bold;
+}
+
+#content ul li a.active, #content u li a.hover, #content u li a.visited {
+    color: #33ff66;
+    font-weight: bold;
 }
 
 #content ul li {
