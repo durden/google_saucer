@@ -62,29 +62,17 @@ class SaucerApi():
 
         return beers
 
-    def getBeerDetails(self, beers):
+    def getBeerDetails(self, beer):
         xpath= "xpath='//table/tr/td/p'"
+        url = urllib.urlencode({"format":"json",
+            "q":"select * from html where url=\"http://www.beerknurd.com/store.beers.process.php?brew=%s\" and %s" % (beer, xpath)})
 
-        q = "select * from html where ("
-        ii = 0
-        for beer in beers:
-            if ii:
-                q += " or "
-
-            q += "url=\"http://www.beerknurd.com/store.beers.process.php?brew=%s\"" % (beer)
-
-            ii = 1
-
-        q += ") and %s " % (xpath)
-
-        url = urllib.urlencode({"format":"json", "q": q})
         res = self.__fetch_json__(url)
-        for x in res['query']['results']['p']:
-            print x
+
         # Create a dictionary b/c it's easier to work with
         # FIXME: Sanitize the keys in dictionary
-        #return dict(zip(res['query']['results']['p'][::2],
-        #            res['query']['results']['p'][1::2]))
+        return dict(zip(res['query']['results']['p'][::2],
+                    res['query']['results']['p'][1::2]))
 
 def main():
     bottles = []
@@ -93,18 +81,9 @@ def main():
     ii = 0
 
     beers = saucer.getAllBeers()
-    ids = []
 
     for beer in beers:
-        ids.append(beer['id'])
-        ii += 1
-        if ii >= 5:
-            break
-
-    details = saucer.getBeerDetails(ids)
-    return
-
-    for beer in beers:
+        details = saucer.getBeerDetails(beer['id'])
         brew = Beer(beer['name'], beer['type'], details['Style:'],
                     details['Description:'])
 
@@ -113,8 +92,9 @@ def main():
         else:
             drafts.append(brew)
 
+        # FIXME: Just process the first 20
         ii += 1
-        if ii >= 5:
+        if ii >= 20:
             break
 
     if len(drafts):

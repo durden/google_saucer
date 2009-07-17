@@ -1,5 +1,12 @@
+- Update names for CAN and CASK, they show up as drafts...
 - Create pretty URLS for viewing details
-- Search by beer name, bottle/draft
-- Cron job to update db once a day
+- Beer search by beer name
 - Workaround for selecting single column and removing dups
-- Tag cloud for styles
+- Tag cloud for styles, brewery
+- Add brewery
+- Search by brewery
+- Only show beers for today
+- New for today beers?
+- More efficient yql scrape from saucer site
+- Scrape info about each style
+- Catch errors for keys on details page instead of dying
