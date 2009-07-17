@@ -6,7 +6,7 @@ class Beer(db.Model):
     type = db.StringProperty()
     style = db.StringProperty()
     descr = db.TextProperty()
-    date = db.DateTimeProperty(auto_now_add=True)
+    date = db.DateProperty(auto_now_add=True)
 
     #def __str__(self):
     #    return "%s (%s):\n    %s\n    %s" % (self.name, self.type,
