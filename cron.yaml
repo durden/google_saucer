@@ -1,0 +1,5 @@
+cron:
+- description: Daily beer update
+  url: /update/
+  schedule: every day 00:00 
+  timezone: America/Chicago
