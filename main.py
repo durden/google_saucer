@@ -35,7 +35,6 @@ class Update(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), 'templates/update.html')
         self.response.out.write(template.render(path, template_values)) 
 
-
 class BrewDetail(webapp.RequestHandler):
     def get(self, request):
         beer = db.get(request)
@@ -47,8 +46,12 @@ class BrewDetail(webapp.RequestHandler):
 class Search(webapp.RequestHandler):
     def get(self, style=None):
         if style is not None and len(style) > 0:
+
             # FIXME: Un-urlize the string
             style = re.sub(r'%20', ' ', style)
+            style = re.sub(r'%28', '(', style)
+            style = re.sub(r'%29', ')', style)
+
             beers = Beer.all().filter("style = ", style)
             template_values = {'beers' : beers, 'search' : style}
             path = os.path.join(os.path.dirname(__file__),
