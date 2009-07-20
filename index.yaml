@@ -10,14 +10,27 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Used 2 times in query history.
+# Used 10 times in query history.
+- kind: Beer
+  properties:
+  - name: date
+  - name: type
+  - name: name
+
+# Unused in query history -- copied from input.
 - kind: Beer
   properties:
   - name: style
     direction: desc
   - name: name
 
-# Used once in query history.
+# Unused in query history -- copied from input.
+- kind: Beer
+  properties:
+  - name: type
+  - name: name
+
+# Unused in query history -- copied from input.
 - kind: Beer
   properties:
   - name: type
