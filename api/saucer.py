@@ -1,5 +1,7 @@
 import re
 import urllib
+import logging
+
 from django.utils import simplejson
 
 class Saucer():
@@ -22,6 +24,31 @@ class Saucer():
     def __fetch_json__(self, url):
         base_url = "http://query.yahooapis.com/v1/public/yql"
         return simplejson.load(urllib.urlopen( "%s?%s" % (base_url, url)))
+
+    def __create_detail_list__(self, res):
+        size = len(res)
+        ii = 0
+        sep = 1
+        mylist = []
+        dict = {}
+
+        # Loop through resulting list in pairs and collect 6 key,value pairs
+        # and then add the dictionary to the returning list
+        while ii < size:
+            key = self.__sanitize__(res[ii])
+            val = self.__sanitize__(res[ii + 1])
+
+            dict[key] = val
+
+            # End of unique pairs
+            if not sep % 6:
+                mylist.append(dict)
+                dict = {}
+
+            ii += 2
+            sep += 1
+
+        return mylist
 
     def getAllBeers(self):
         url = urllib.urlencode({"format":"json",
@@ -50,19 +77,19 @@ class Saucer():
 
         return beers
 
-    def getBeerDetails(self, beer):
+    def getBeerDetails(self, beers):
         xpath= "xpath='//table/tr/td/p'"
-        url = urllib.urlencode({"format":"json",
-            "q":"select * from html where url=\"http://www.beerknurd.com/store.beers.process.php?brew=%s\" and %s" % (beer, xpath)})
+        q = "select * from html where ("
+        ii = 0
 
-        res = self.__fetch_json__(url)
+        for beer in beers:
+            if ii:
+                q += " or "
 
-        # Create a dictionary b/c it's easier to work with
-        tmp = dict(zip(res['query']['results']['p'][::2],
-                    res['query']['results']['p'][1::2]))
+            q += "url=\"http://www.beerknurd.com/store.beers.process.php?brew=%s\"" % (beer)
+            ii = 1
 
-        # Cleanup all the whitespace, etc.
-        for k,v in tmp.items():
-            tmp[k] = self.__sanitize__(v)
-
-        return tmp
+        q += ") and %s " % (xpath)
+        logging.debug("beers = %s ....... q = %s" % (beers, q))
+        res = self.__fetch_json__(urllib.urlencode({"format":"json", "q": q}))
+        return self.__create_detail_list__(res['query']['results']['p'])
