@@ -50,7 +50,8 @@ class Update(webapp.RequestHandler):
                 db.put(tmp)
                 jj += 1
 
-        template_values = {}
+        template_values = {'fetch' : Saucer.fetch, 'san' : Saucer.san,
+                            'details' : Saucer.create_details}
         path = os.path.join(os.path.dirname(__file__), 'templates/update.html')
         self.response.out.write(template.render(path, template_values)) 
 
