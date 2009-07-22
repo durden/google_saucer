@@ -25,33 +25,44 @@ class Index(webapp.RequestHandler):
         self.response.out.write(template.render(path, template_values)) 
 
 class Update(webapp.RequestHandler):
-    def get(self):
+    def get(self, start=None, fetch=None):
+        ids = []
+        ii = start
+        added = 0
+        skip = 10
         saucer = Saucer()
         all_beers = saucer.getAllBeers()
-        ids = []
-        num_beers = len(all_beers)
-        ii = 0
-        skip = 20
 
-        while ii < num_beers:
-            jj = 0
+        if fetch is not None:
+            num_beers = int(fetch)
+
+        if start is not None:
+            ii = int(start)
+
+        if num_beers < skip:
+            skip = num_beers
+
+        while added < num_beers:
             beers = all_beers[ii:ii + skip]
-            ii += skip
-
             for beer in beers:
                 ids.append(beer['id'])
 
             details = saucer.getBeerDetails(ids)
-            ids = []
 
+            jj = 0
             for det in details:
                 tmp = Beer(name=beers[jj]['name'], type=beers[jj]['type'],
                             style=det['Style:'], descr=det['Description:'])
                 db.put(tmp)
                 jj += 1
 
+            added += len(details)
+            ii += skip
+            ids = []
+
         template_values = {'fetch' : Saucer.fetch, 'san' : Saucer.san,
-                            'details' : Saucer.create_details}
+                            'details' : Saucer.create_details, 'added' : added,
+                            'start' : start, 'requested' : fetch}
         path = os.path.join(os.path.dirname(__file__), 'templates/update.html')
         self.response.out.write(template.render(path, template_values)) 
 
@@ -114,7 +125,7 @@ def main():
 
     # URL Mapping
     app = webapp.WSGIApplication([('/', Index),
-                                  (r'/update/', Update),
+                                  (r'/update/(\d+)/(\d+)', Update),
                                   (r'/beer/(.*)', BrewDetail),
                                   (r'/search/*(.*)', Search),
                                   #(r'/edit/*(.*)', EditHandler),
