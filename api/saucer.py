@@ -1,24 +1,32 @@
 import re
 import urllib
 import logging
+import time
 
 from django.utils import simplejson
+
 
 class Saucer():
     BOTTLE = "Bottle"
     DRAFT = "Draft"
 
+    create_details = 0.0
+    fetch = 0.0
+    san = 0.0
+
     __btl_str__ = r"\(BTL\)"
 
     def __sanitize__(self, arg):
+        x = time.time()
         ret = "N/A"
 
         if (isinstance(arg, unicode)):
             # Suppress multiple whitespace characters and leading/trailing
             # whitespace
             ret = re.sub('\s+', ' ', arg).strip()
-            #ret = ' '.join(arg.split())
 
+        y = time.time()
+        Saucer.san += (y - x)
         return ret
 
     def __fetch_json__(self, url):
@@ -26,6 +34,7 @@ class Saucer():
         return simplejson.load(urllib.urlopen( "%s?%s" % (base_url, url)))
 
     def __create_detail_list__(self, res):
+        x = time.time()
         size = len(res)
         ii = 0
         sep = 1
@@ -48,6 +57,8 @@ class Saucer():
             ii += 2
             sep += 1
 
+        y = time.time()
+        Saucer.create_details += (y - x)
         return mylist
 
     def getAllBeers(self):
@@ -90,6 +101,8 @@ class Saucer():
             ii = 1
 
         q += ") and %s " % (xpath)
-        logging.debug("beers = %s ....... q = %s" % (beers, q))
+        x = time.time()
         res = self.__fetch_json__(urllib.urlencode({"format":"json", "q": q}))
+        y = time.time()
+        Saucer.fetch += (y - x)
         return self.__create_detail_list__(res['query']['results']['p'])
