@@ -39,6 +39,7 @@ class Update(webapp.RequestHandler):
         if start is not None:
             ii = int(start)
 
+        # Don't skip by more than requested
         if num_beers < skip:
             skip = num_beers
 
@@ -48,6 +49,9 @@ class Update(webapp.RequestHandler):
                 ids.append(beer['id'])
 
             details = saucer.getBeerDetails(ids)
+            num_details = len(details)
+            if not num_details:
+                break
 
             jj = 0
             for det in details:
@@ -56,7 +60,7 @@ class Update(webapp.RequestHandler):
                 db.put(tmp)
                 jj += 1
 
-            added += len(details)
+            added += num_details
             ii += skip
             ids = []
 
