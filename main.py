@@ -27,11 +27,13 @@ class Index(webapp.RequestHandler):
 class Update(webapp.RequestHandler):
     def get(self, start=None, fetch=None):
         ids = []
-        ii = start
+        ii = 0
         added = 0
         skip = 10
         saucer = Saucer()
+        saucer.reset_stats()
         all_beers = saucer.getAllBeers()
+        num_beers = len(all_beers)
 
         if fetch is not None:
             num_beers = int(fetch)

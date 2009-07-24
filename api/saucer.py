@@ -16,6 +16,11 @@ class Saucer():
 
     __btl_str__ = r"\(BTL\)"
 
+    def reset_stats(self):
+        Saucer.create_details = 0.0
+        Saucer.fetch = 0.0
+        Saucer.san = 0.0
+
     def __sanitize__(self, arg):
         x = time.time()
 
