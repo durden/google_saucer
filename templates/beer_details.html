@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1> {{ beer.name }} </h1>
-    <ul>
-        <li> Serving Type: {{ beer.type }} </li>
-        <li> Style: {{ beer.style }} </li>
-        <li> Updated on: {{ beer.date|date:"M d Y" }} </li>
-    </ul>
-    <p> {{ beer.descr }} </p>
+    {% if beer %}
+        <h1> {{ beer.name }} </h1>
+        <ul>
+            <li> Serving Type: {{ beer.type }} </li>
+            <li> Style: {{ beer.style }} </li>
+            <li> Updated on: {{ beer.date|date:"M d Y" }} </li>
+        </ul>
+        <p> {{ beer.descr }} </p>
+    {% else %}
+        <p>Can't find that beer, <a href="/">try another</a>.</p>
+    {% endif %}
 {% endblock %}

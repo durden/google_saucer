@@ -74,7 +74,11 @@ class Update(webapp.RequestHandler):
 
 class BrewDetail(webapp.RequestHandler):
     def get(self, request):
-        beer = db.get(request)
+        try:
+            beer = db.get(request)
+        except db.BadKeyError:
+            beer = None
+
         template_values = {'beer' : beer}
         path = os.path.join(os.path.dirname(__file__),
                                 'templates/beer_details.html')
