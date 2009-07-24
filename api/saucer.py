@@ -18,6 +18,7 @@ class Saucer():
 
     def __sanitize__(self, arg):
         x = time.time()
+
         ret = "N/A"
 
         if (isinstance(arg, unicode)):
@@ -25,8 +26,19 @@ class Saucer():
             # whitespace
             ret = re.sub('\s+', ' ', arg).strip()
 
+        # Sometimes there are some weird stuff in the scraped text, so just
+        # try to treat it a like a dictionary with 'content' as key
+        if (isinstance(arg, dict)):
+            try:
+                # Suppress multiple whitespace characters and leading/trailing
+                # whitespace
+                ret = re.sub('\s+', ' ', arg['content']).strip()
+            except KeyError:
+                pass
+
         y = time.time()
         Saucer.san += (y - x)
+
         return ret
 
     def __fetch_json__(self, url):
@@ -35,6 +47,7 @@ class Saucer():
 
     def __create_detail_list__(self, res):
         x = time.time()
+
         size = len(res)
         ii = 0
         sep = 1
@@ -47,18 +60,23 @@ class Saucer():
             key = self.__sanitize__(res[ii])
             val = self.__sanitize__(res[ii + 1])
 
-            dict[key] = val
-
-            # End of unique pairs
-            if not sep % 6:
+            # Handles the case that some entries might not have 6 unique pairs
+            # so if we already have the key, this entry is another dictionary
+            if key in dict:
                 mylist.append(dict)
                 dict = {}
 
+            dict[key] = val
+
+            # Last go around in loop, save it
+            if ii + 2 >= size:
+                mylist.append(dict)
+
             ii += 2
-            sep += 1
 
         y = time.time()
         Saucer.create_details += (y - x)
+
         return mylist
 
     def getAllBeers(self):
@@ -99,10 +117,17 @@ class Saucer():
 
             q += "url=\"http://www.beerknurd.com/store.beers.process.php?brew=%s\"" % (beer)
             ii = 1
-
         q += ") and %s " % (xpath)
+
         x = time.time()
+
         res = self.__fetch_json__(urllib.urlencode({"format":"json", "q": q}))
+
         y = time.time()
         Saucer.fetch += (y - x)
-        return self.__create_detail_list__(res['query']['results']['p'])
+
+        try:
+            return self.__create_detail_list__(res['query']['results']['p'])
+        # Maybe no results came back b/c beers were invalid, etc.
+        except KeyError:
+            return []
