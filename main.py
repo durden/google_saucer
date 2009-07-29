@@ -14,13 +14,23 @@ from models.beer import Beer
 from api.saucer import Saucer
 
 today = datetime.date.today()
+today = datetime.date.today()
+week = datetime.timedelta(weeks=1)
+last = today - week
+next = today + week
+
+def __weekly_brews__(query):
+    return query.filter("date >= ", last).filter("date < ", next).order("date")
 
 class Index(webapp.RequestHandler):
     def get(self):
-        drafts = Beer.all().filter("date = ", today).filter("type = ", "Draft").order("name")
-        bottles = Beer.all().filter("date = ", today).filter("type = ", "Bottle").order("name")
-        template_values = {'drafts' : drafts, 'bottles' : bottles}
+        # Have to filter name afterwards b/c datastore requires the inequality
+        # operators to have a order FIRST if there is going to be any order
+        # clauses at all (see datastore docs)
+        drafts = __weekly_brews__(Beer.all().filter("type = ", "Draft")).order("name")
+        bottles = __weekly_brews__(Beer.all().filter("type = ", "Bottle")).order("name")
 
+        template_values = {'drafts' : drafts, 'bottles' : bottles}
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
         self.response.out.write(template.render(path, template_values)) 
 
@@ -95,7 +105,8 @@ class Search(webapp.RequestHandler):
 
             # Find all the styles by creating a set from all beers b/c
             # app engine won't let us grab just this column from a table
-            beers = Beer.all().filter("date = ", today).filter("style = ", style)
+            beers = __weekly_brews__(Beer.all().filter("style = ", style)).order("name")
+
             template_values = {'beers' : beers, 'search' : style}
             path = os.path.join(os.path.dirname(__file__),
                                     'templates/beers.html')
@@ -104,7 +115,7 @@ class Search(webapp.RequestHandler):
 
         # Use a list to preserve ordering
         styles = []
-        tmp = Beer.all().filter("date = ", today)
+        tmp = __weekly_brews__(Beer.all())
 
         for beer in tmp:
             styles.append(beer.style)
@@ -122,13 +133,11 @@ class Search(webapp.RequestHandler):
         if name is None or not len(name):
             self.redirect("/search")
             return
-        beers = Beer.all().filter("date = ", today).filter("name = ", name)
+        beers = __weekly_brews__(Beer.all().filter("name = ", name))
 
         template_values = {'beers' : beers}
-        path = os.path.join(os.path.dirname(__file__),
-                                'templates/beers.html')
+        path = os.path.join(os.path.dirname(__file__), 'templates/beers.html')
         self.response.out.write(template.render(path, template_values))
-
 
 def main():
     #logging.getLogger().setLevel(logging.DEBUG)
