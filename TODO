@@ -13,3 +13,4 @@
 - Add links for cans, cask, draft, and bottle at top
 - Add link for styles at top
 - Programmatically step through update in cron job
+- Cleanup index.html template (duplicate loops!)
