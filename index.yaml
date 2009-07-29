@@ -24,6 +24,27 @@ indexes:
     direction: desc
   - name: name
 
+# Used 10 times in query history.
+- kind: Beer
+  properties:
+  - name: type
+  - name: date
+
+# Used 3 times in query history.
+- kind: Beer
+  properties:
+  - name: type
+  - name: date
+  - name: name
+
+# Used once in query history.
+- kind: Beer
+  properties:
+  - name: type
+  - name: date
+  - name: name
+    direction: desc
+
 # Unused in query history -- copied from input.
 - kind: Beer
   properties:
