@@ -9,12 +9,16 @@ from django.utils import simplejson
 class Saucer():
     BOTTLE = "Bottle"
     DRAFT = "Draft"
+    CAN = "Can"
+    CASK = "Cask"
 
     create_details = 0.0
     fetch = 0.0
     san = 0.0
 
     __btl_str__ = r"\(BTL\)"
+    __can_str__ = r"\(CAN\)"
+    __cask_str__ = r"\(CASK\)"
 
     def reset_stats(self):
         Saucer.create_details = 0.0
@@ -92,7 +96,10 @@ class Saucer():
 
         # Hide the ugly yql/html parsing and create list of dictionaries 
         beers = []
-        regex = re.compile(Saucer.__btl_str__)
+        btl = re.compile(Saucer.__btl_str__)
+        cask = re.compile(Saucer.__cask_str__)
+        can = re.compile(Saucer.__can_str__)
+
         for tmp in res['query']['results']['option']:
             beer = {}
 
@@ -100,12 +107,16 @@ class Saucer():
             beer['id'] = tmp['value'].strip()
             beer['type'] = Saucer.DRAFT 
 
-            # Bottle or draft?
-            if regex.search(beer['name']):
+            # Serving type
+            if btl.search(beer['name']):
                 beer['type'] = Saucer.BOTTLE
-
-                # Remove the bottle string in name
-                beer['name'] = re.sub(Saucer.__btl_str__, '', beer['name'])
+                beer['name'] = btl.sub('', beer['name'])
+            elif cask.search(beer['name']):
+                beer['type'] = Saucer.CASK
+                beer['name'] = cask.sub('', beer['name'])
+            elif can.search(beer['name']):
+                beer['type'] = Saucer.CAN
+                beer['name'] = can.sub('', beer['name'])
 
             beers.append(beer)
 
