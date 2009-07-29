@@ -19,8 +19,38 @@ week = datetime.timedelta(weeks=1)
 last = today - week
 next = today + week
 
+# Helper function for sorting weekly brews
 def __weekly_brews__(query):
     return query.filter("date >= ", last).filter("date < ", next).order("date")
+
+class BrewHandler(webapp.RequestHandler):
+    # FIXME: Better way to do this?
+    def type(self):
+        return None
+
+    def get(self):
+        beers = __weekly_brews__(Beer.all().filter("type = ", self.type())).order("name")
+        template_values = {'beers' : beers, 'type' : self.type()}
+
+        # FIXME: This template sucks b/c it has 4 loops that are duplicates
+        path = os.path.join(os.path.dirname(__file__), 'templates/type.html')
+        self.response.out.write(template.render(path, template_values)) 
+
+class CanHandler(BrewHandler):
+    def type(self):
+        return "Can"
+
+class CaskHandler(BrewHandler):
+    def type(self):
+        return "Cask"
+
+class DraftHandler(BrewHandler):
+    def type(self):
+        return "Draft"
+
+class BottleHandler(BrewHandler):
+    def type(self):
+        return "Bottle"
 
 class Index(webapp.RequestHandler):
     def get(self):
@@ -29,8 +59,18 @@ class Index(webapp.RequestHandler):
         # clauses at all (see datastore docs)
         drafts = __weekly_brews__(Beer.all().filter("type = ", "Draft")).order("name")
         bottles = __weekly_brews__(Beer.all().filter("type = ", "Bottle")).order("name")
+        cans = __weekly_brews__(Beer.all().filter("type = ", "Can")).order("name")
+        casks = __weekly_brews__(Beer.all().filter("type = ", "Cask")).order("name")
 
-        template_values = {'drafts' : drafts, 'bottles' : bottles}
+        beers = {}
+        beers['drafts'] = drafts
+        beers['bottles'] = bottles
+        beers['cans'] = cans
+        beers['casks'] = casks
+
+        template_values = {'beers' : beers}
+
+        # FIXME: This template sucks b/c it has 4 loops that are duplicates
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
         self.response.out.write(template.render(path, template_values)) 
 
@@ -147,8 +187,10 @@ def main():
                                   (r'/update/(\d+)/(\d+)', Update),
                                   (r'/beer/(.*)', BrewDetail),
                                   (r'/search/*(.*)', Search),
-                                  #(r'/edit/*(.*)', EditHandler),
-                                  #(r'/delete/(.*)', DeleteHandler),
+                                  (r'/cask/', CaskHandler),
+                                  (r'/can/', CanHandler),
+                                  (r'/bottle/', BottleHandler),
+                                  (r'/draft/', DraftHandler),
                                  ], debug=True)
     run_wsgi_app(app)
 
