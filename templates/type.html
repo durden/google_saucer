@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ type }} Beers</h1>
+    {% for beer in beers %}
+        {% if forloop.first %}
+            <ul>
+        {% endif %}
+
+        <li><a href="/beer/{{ beer.key }}">{{ beer.name }}</a></li>
+
+        {% if forloop.last %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
