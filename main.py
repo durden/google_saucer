@@ -19,13 +19,6 @@ week = datetime.timedelta(weeks=1)
 last = today - week
 next = today + week
 
-# Helper function for removing url encoding
-def __url_decode__(arg):
-    arg = re.sub(r'%20', ' ', arg)
-    arg = re.sub(r'%28', '(', arg)
-    arg = re.sub(r'%29', ')', arg)
-    return arg
-
 # Helper function for sorting weekly brews
 def __weekly_brews__(query):
     return query.filter("date >= ", last).filter("date < ", next).order("date")
@@ -130,10 +123,11 @@ class Update(webapp.RequestHandler):
         self.response.out.write(template.render(path, template_values)) 
 
 class BrewDetail(webapp.RequestHandler):
-    def get(self, req):
-        # Use fetch here to make the query actually execute and hope there is
-        # only 1 with this name... :)
-        beer = Beer.all().filter('name = ', __url_decode__(req)).fetch(1)[0]
+    def get(self, request):
+        try:
+            beer = db.get(request)
+        except db.BadKeyError:
+            beer = None
 
         template_values = {'beer' : beer}
         path = os.path.join(os.path.dirname(__file__),
@@ -144,9 +138,13 @@ class Search(webapp.RequestHandler):
     def get(self, style=None):
         if style is not None and len(style) > 0:
 
+            # FIXME: Un-urlize the string
+            style = re.sub(r'%20', ' ', style)
+            style = re.sub(r'%28', '(', style)
+            style = re.sub(r'%29', ')', style)
+
             # Find all the styles by creating a set from all beers b/c
             # app engine won't let us grab just this column from a table
-            style = __url_decode__(style)
             beers = __weekly_brews__(Beer.all().filter("style = ", style)).order("name")
 
             template_values = {'beers' : beers, 'search' : style}

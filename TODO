@@ -1,13 +1,16 @@
+- Update names for CAN and CASK, they show up as drafts...
+- Create pretty URLS for viewing details
 - Beer search by beer name
 - Workaround for selecting single column and removing dups
 - Tag cloud for styles, brewery
 - Date wrapper for handling date filter for today that
-    can handle going back day by day to find something to show
+  can handle going back day by day to find something to show
 - Add brewery
 - Search by brewery
 - New for today beers?
 - Scrape info about each style
+- Categorize cans and cask
+- Add links for cans, cask, draft, and bottle at top
+- Add link for styles at top
 - Programmatically step through update in cron job
 - Cleanup index.html template (duplicate loops!)
-- Change dates for beers to be 6 days to prevent dups?
-- Add twitter updates from saucer
