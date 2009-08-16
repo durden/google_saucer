@@ -2,55 +2,8 @@
 
 {% block content %}
     <h1>Current Beers</h1>
-    <h2>Draft</h2>
-    {% for beer in beers.drafts %}
-        {% if forloop.first %}
-            <ul>
-        {% endif %}
-
-        <li><a href="/beer/{{ beer.key }}">{{ beer.name }}</a></li>
-
-        {% if forloop.last %}
-            </ul>
-        {% endif %}
-    {% endfor %}
-
-    <h2>Cask</h2>
-    {% for beer in beers.casks %}
-        {% if forloop.first %}
-            <ul>
-        {% endif %}
-
-        <li><a href="/beer/{{ beer.key }}">{{ beer.name }}</a></li>
-
-        {% if forloop.last %}
-            </ul>
-        {% endif %}
-    {% endfor %}
-
-    <h2>Can</h2>
-    {% for beer in beers.cans %}
-        {% if forloop.first %}
-            <ul>
-        {% endif %}
-
-        <li><a href="/beer/{{ beer.key }}">{{ beer.name }}</a></li>
-
-        {% if forloop.last %}
-            </ul>
-        {% endif %}
-    {% endfor %}
-
-    <h2>Bottle</h2>
-    {% for beer in beers.bottles %}
-        {% if forloop.first %}
-            <ul>
-        {% endif %}
-
-        <li><a href="/beer/{{ beer.key }}">{{ beer.name }}</a></li>
-
-        {% if forloop.last %}
-            </ul>
-        {% endif %}
-    {% endfor %}
+    {{ beers.casks|list_beers:"Cask" }}
+    {{ beers.drafts|list_beers:"Draft" }}
+    {{ beers.cans|list_beers:"Can" }}
+    {{ beers.bottles|list_beers:"Bottle" }}
 {% endblock %}

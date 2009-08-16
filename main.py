@@ -13,6 +13,8 @@ from google.appengine.ext import db
 from models.beer import Beer
 from api.saucer import Saucer
 
+template.register_template_library('templatetags.showbeers')
+
 today = datetime.date.today()
 today = datetime.date.today()
 week = datetime.timedelta(weeks=1)
