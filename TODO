@@ -1,4 +1,3 @@
-- Update names for CAN and CASK, they show up as drafts...
 - Create pretty URLS for viewing details
 - Beer search by beer name
 - Workaround for selecting single column and removing dups
@@ -9,8 +8,4 @@
 - Search by brewery
 - New for today beers?
 - Scrape info about each style
-- Categorize cans and cask
-- Add links for cans, cask, draft, and bottle at top
-- Add link for styles at top
 - Programmatically step through update in cron job
-- Cleanup index.html template (duplicate loops!)
