@@ -11,7 +11,7 @@ from google.appengine.ext.webapp import template
 from google.appengine.ext import db
 
 from models.beer import Beer
-from api.saucer import Saucer
+from saucer_api.saucer import Saucer
 
 template.register_template_library('templatetags.showbeers')
 

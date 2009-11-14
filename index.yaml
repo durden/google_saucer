@@ -10,41 +10,35 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Unused in query history -- copied from input.
 - kind: Beer
   properties:
   - name: date
   - name: type
   - name: name
 
-# Used 12 times in query history.
 - kind: Beer
   properties:
   - name: style
   - name: date
   - name: name
 
-# Unused in query history -- copied from input.
 - kind: Beer
   properties:
   - name: style
     direction: desc
   - name: name
 
-# Unused in query history -- copied from input.
 - kind: Beer
   properties:
   - name: type
   - name: date
 
-# Used 30 times in query history.
 - kind: Beer
   properties:
   - name: type
   - name: date
   - name: name
 
-# Unused in query history -- copied from input.
 - kind: Beer
   properties:
   - name: type
@@ -52,13 +46,11 @@ indexes:
   - name: name
     direction: desc
 
-# Unused in query history -- copied from input.
 - kind: Beer
   properties:
   - name: type
   - name: name
 
-# Unused in query history -- copied from input.
 - kind: Beer
   properties:
   - name: type
