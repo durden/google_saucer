@@ -1,4 +1,3 @@
-import re
 from google.appengine.ext import db
 
 class Beer(db.Model):
