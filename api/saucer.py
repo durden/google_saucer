@@ -96,9 +96,9 @@ class Saucer():
 
         # Hide the ugly yql/html parsing and create list of dictionaries 
         beers = []
-        btl = re.compile(Saucer.__btl_str__)
-        cask = re.compile(Saucer.__cask_str__)
-        can = re.compile(Saucer.__can_str__)
+        btl = re.compile(Saucer.__btl_str__, re.I)
+        cask = re.compile(Saucer.__cask_str__, re.I)
+        can = re.compile(Saucer.__can_str__, re.I)
 
         for tmp in res['query']['results']['option']:
             beer = {}
